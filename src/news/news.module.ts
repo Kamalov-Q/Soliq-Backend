@@ -8,3 +8,4 @@ import { NewsController } from './news.controller';
   controllers: [NewsController],
 })
 export class NewsModule {}
+ 

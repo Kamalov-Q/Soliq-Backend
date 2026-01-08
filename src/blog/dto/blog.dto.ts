@@ -1,8 +1,7 @@
-import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateBlogDto {
   @IsString()
-  @IsUrl()
   @IsNotEmpty()
   videoUrl: string;
 
@@ -19,4 +18,20 @@ export class CreateBlogDto {
   titleEn: string;
 }
 
-export class UpdateBlogDto implements Partial<CreateBlogDto> {}
+export class UpdateBlogDto {
+  @IsString()
+  @IsOptional()
+  videoUrl: string;
+
+  @IsString()
+  @IsOptional()
+  titleUz: string;
+
+  @IsString()
+  @IsOptional()
+  titleRu: string;
+
+  @IsString()
+  @IsOptional()
+  titleEn: string;
+}

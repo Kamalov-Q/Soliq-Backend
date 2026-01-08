@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateNewsDto {
   @IsString()
@@ -15,18 +15,17 @@ export class CreateNewsDto {
 
   @IsString()
   @IsNotEmpty()
-  descUz: string;
+  descriptionUz: string;
 
   @IsString()
   @IsNotEmpty()
-  descRu: string;
+  descriptionRu: string;
 
   @IsString()
   @IsNotEmpty()
-  descEn: string;
+  descriptionEn: string;
 
   @IsString()
-  @IsUrl()
   @IsNotEmpty()
   imageUrl: string;
 
@@ -35,4 +34,36 @@ export class CreateNewsDto {
   author: string;
 }
 
-export class UpdateNewsDto implements Partial<CreateNewsDto> {}
+export class UpdateNewsDto {
+  @IsString()
+  @IsOptional()
+  titleUz?: string;
+
+  @IsString()
+  @IsOptional()
+  titleRu?: string;
+
+  @IsString()
+  @IsOptional()
+  titleEn?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionUz?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionRu?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionEn?: string;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  author?: string;
+}

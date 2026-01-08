@@ -11,7 +11,7 @@ export class DatabaseService implements OnModuleInit {
   async onModuleInit() {
     this.client = postgres(process.env.DATABASE_URL!);
     this.db = drizzle(this.client, { schema });
-  }
+  } 
 
   async onModuleDestroy() {
     await this.client.end();
