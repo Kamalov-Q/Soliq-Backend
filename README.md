@@ -232,4 +232,7 @@ UNLICENSED
 
 ## Author
 
-[Your Name]
+Kamalov Quvomiddin
+
+## Telegram
+https://t.me/kamalovq
