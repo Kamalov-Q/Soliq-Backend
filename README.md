@@ -1,98 +1,235 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Soliq Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based REST API backend application for managing blogs and news with multi-language support (Uzbek, Russian, English) and file upload capabilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 📝 **Blog Management**: Create, read, update, and delete blog posts with video content
+- 📰 **News Management**: Full CRUD operations for news articles with images
+- 🌍 **Multi-language Support**: Content available in Uzbek (Uz), Russian (Ru), and English (En)
+- 📤 **File Upload**: Upload images and videos with validation
+- 🗄️ **Database**: PostgreSQL with Drizzle ORM
+- ✅ **Validation**: Request validation using class-validator
+- 🎯 **TypeScript**: Fully typed codebase
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: NestJS 10.x
+- **Language**: TypeScript 5.x
+- **Database**: PostgreSQL
+- **ORM**: Drizzle ORM
+- **File Upload**: Multer
+- **Validation**: class-validator, class-transformer
 
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js (v20 or higher)
+- npm or yarn
+- PostgreSQL database
+- TypeScript
+
+## Installation
+
+1. Clone the repository:
 ```bash
-$ npm install
+git clone <repository-url>
+cd Soliq-Backend
 ```
 
-## Compile and run the project
-
+2. Install dependencies:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+3. Create a `.env` file in the root directory:
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+PORT=3002
 ```
 
-## Deployment
+## Database Setup
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+1. Create a PostgreSQL database:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+createdb your_database_name
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. Generate database migrations:
+```bash
+npm run db:generate
+```
 
-## Resources
+3. Run migrations:
+```bash
+npm run db:migrate
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Alternatively, you can push the schema directly to the database:
+```bash
+npm run db:push
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+4. (Optional) Open Drizzle Studio to view your database:
+```bash
+npm run db:studio
+```
 
-## Support
+## Running the Application
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Development Mode
+```bash
+npm run dev
+```
 
-## Stay in touch
+The application will start on `http://localhost:3002` (or the port specified in your `.env` file).
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Production Mode
+```bash
+npm run build
+npm run start:prod
+```
+
+### Debug Mode
+```bash
+npm run start:debug
+```
+
+## API Endpoints
+
+### Blogs
+
+- `POST /blogs` - Create a new blog post
+- `GET /blogs` - Get all blog posts (optional `?lang=uz|ru|en` query parameter)
+- `GET /blogs/:id` - Get a specific blog post (optional `?lang=uz|ru|en` query parameter)
+- `PATCH /blogs/:id` - Update a blog post
+- `DELETE /blogs/:id` - Delete a blog post
+
+### News
+
+- `POST /news` - Create a new news article
+- `GET /news` - Get all news articles (optional `?lang=uz|ru|en` query parameter)
+- `GET /news/:id` - Get a specific news article (optional `?lang=uz|ru|en` query parameter)
+- `PATCH /news/:id` - Update a news article
+- `DELETE /news/:id` - Delete a news article
+
+### File Upload
+
+- `POST /upload/image` - Upload an image file
+  - **Content-Type**: `multipart/form-data`
+  - **Field name**: `file`
+  - **Allowed formats**: JPEG, JPG, PNG, WebP
+  - **Max size**: 10MB
+
+- `POST /upload/video` - Upload a video file
+  - **Content-Type**: `multipart/form-data`
+  - **Field name**: `file`
+  - **Allowed formats**: MP4, MPEG, MOV, AVI
+  - **Max size**: 150MB
+
+### Static Files
+
+Uploaded files are served statically at:
+- Images: `/public/images/`
+- Videos: `/public/videos/`
+
+## Project Structure
+
+```
+Soliq-Backend/
+├── src/
+│   ├── app.module.ts          # Root application module
+│   ├── main.ts                # Application entry point
+│   ├── blog/                  # Blog module
+│   │   ├── blog.controller.ts
+│   │   ├── blog.service.ts
+│   │   ├── blog.module.ts
+│   │   └── dto/
+│   │       └── blog.dto.ts
+│   ├── news/                  # News module
+│   │   ├── news.controller.ts
+│   │   ├── news.service.ts
+│   │   ├── news.module.ts
+│   │   └── dto/
+│   │       └── news.dto.ts
+│   ├── upload/                # File upload module
+│   │   ├── upload.controller.ts
+│   │   ├── upload.service.ts
+│   │   └── upload.module.ts
+│   └── database/              # Database configuration
+│       ├── database.module.ts
+│       ├── database.service.ts
+│       ├── schema.ts          # Database schema definitions
+│       ├── migrate.ts         # Migration script
+│       └── query.ts           # Query utilities
+├── public/                    # Static files directory
+│   ├── images/               # Uploaded images
+│   └── videos/               # Uploaded videos
+├── drizzle/                  # Database migrations
+├── dist/                     # Compiled JavaScript files
+├── drizzle.config.ts         # Drizzle ORM configuration
+├── package.json
+└── tsconfig.json
+```
+
+## Available Scripts
+
+- `npm run build` - Build the application
+- `npm run start` - Start the application
+- `npm run dev` - Start in development mode with watch
+- `npm run start:debug` - Start in debug mode
+- `npm run start:prod` - Start in production mode
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+- `npm run test` - Run unit tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:cov` - Run tests with coverage
+- `npm run db:generate` - Generate database migrations
+- `npm run db:push` - Push schema changes to database
+- `npm run db:migrate` - Run database migrations
+- `npm run db:studio` - Open Drizzle Studio
+- `npm run db:query` - Run database queries
+
+## Database Schema
+
+### Blogs Table
+- `id` (UUID, Primary Key)
+- `video_url` (Text)
+- `title_uz` (Text) - Uzbek title
+- `title_ru` (Text) - Russian title
+- `title_en` (Text) - English title
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
+
+### News Table
+- `id` (UUID, Primary Key)
+- `title_uz` (Text) - Uzbek title
+- `title_ru` (Text) - Russian title
+- `title_en` (Text) - English title
+- `description_uz` (Text) - Uzbek description
+- `description_ru` (Text) - Russian description
+- `description_en` (Text) - English description
+- `image_url` (Text)
+- `author` (Text)
+- `created_at` (Timestamp)
+- `updated_at` (Timestamp)
+
+## CORS
+
+CORS is enabled by default. The application accepts requests from any origin. For production, consider configuring CORS to restrict allowed origins.
+
+## Validation
+
+The application uses global validation pipes with the following settings:
+- **whitelist**: true - Strips properties that don't have decorators
+- **forbidNonWhitelisted**: true - Throws error if non-whitelisted properties are present
+- **transform**: true - Automatically transforms payloads to DTO instances
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+UNLICENSED
+
+## Author
+
+[Your Name]
