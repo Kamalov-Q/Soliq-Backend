@@ -2,7 +2,7 @@ import {
   Controller,
   Post,
   UseInterceptors,
-  UploadedFile, 
+  UploadedFile,
   BadRequestException,
   Delete,
   Body,
@@ -10,6 +10,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadThingService } from './uploadthing.service';
+import * as multer from 'multer';
+
+const memoryStorage = multer.memoryStorage();
 
 @Controller('api/uploadthing')
 export class UploadThingController {
@@ -29,76 +32,31 @@ export class UploadThingController {
   }
 
   @Post('image')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage }))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
-    console.log('Image upload request received');
-    console.log(
-      'File:',
-      file
-        ? {
-            originalname: file.originalname,
-            mimetype: file.mimetype,
-            size: file.size,
-          }
-        : 'No file',
-    );
-
-    if (!file) {
+    if (!file)
       throw new BadRequestException(
-        'No file uploaded. Make sure to send file with key "file" as multipart/form-data',
+        'No file uploaded. Use key "file" in multipart/form-data',
       );
-    }
-
     const result = await this.uploadThingService.uploadImage(file);
-
-    return {
-      success: true,
-      message: 'Image uploaded successfully',
-      data: result,
-    };
+    return { success: true, message: 'Image uploaded', data: result };
   }
 
   @Post('video')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage }))
   async uploadVideo(@UploadedFile() file: Express.Multer.File) {
-    console.log('Video upload request received');
-    console.log(
-      'File:',
-      file
-        ? {
-            originalname: file.originalname,
-            mimetype: file.mimetype,
-            size: file.size,
-          }
-        : 'No file',
-    );
-
-    if (!file) {
+    if (!file)
       throw new BadRequestException(
-        'No file uploaded. Make sure to send file with key "file" as multipart/form-data',
+        'No file uploaded. Use key "file" in multipart/form-data',
       );
-    }
-
     const result = await this.uploadThingService.uploadVideo(file);
-
-    return {
-      success: true,
-      message: 'Video uploaded successfully',
-      data: result,
-    };
+    return { success: true, message: 'Video uploaded', data: result };
   }
 
   @Delete('file')
   async deleteFile(@Body('key') key: string) {
-    if (!key) {
-      throw new BadRequestException('File key is required');
-    }
-
+    if (!key) throw new BadRequestException('File key is required');
     await this.uploadThingService.deleteFile(key);
-
-    return {
-      success: true,
-      message: 'File deleted successfully',
-    };
+    return { success: true, message: 'File deleted' };
   }
 }

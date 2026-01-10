@@ -7,92 +7,67 @@ export class UploadThingService {
 
   constructor() {
     const token = process.env.UPLOADTHING_TOKEN;
-
-    if (!token) {
-      throw new Error('UPLOADTHING_TOKEN is not set in environment variables');
-    }
-
+    if (!token) throw new Error('UPLOADTHING_TOKEN not set');
     this.utapi = new UTApi({ token });
-    console.log('UploadThing service initialized');
   }
 
-  async uploadImage(
-    file: Express.Multer.File,
-  ): Promise<{ url: string; key: string }> {
+  /** Upload an image (<=4MB) */
+  async uploadImage(file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file provided');
+    if (!file.mimetype.startsWith('image/'))
+      throw new BadRequestException('Only images allowed');
+    if (file.size > 4 * 1024 * 1024)
+      throw new BadRequestException('Image must be < 4MB');
+
     try {
-      // Validate file type
-      if (!file.mimetype.startsWith('image/')) {
-        throw new BadRequestException('Only image files are allowed');
-      }
-
-      // Validate file size (4MB)
-      const maxSize = 4 * 1024 * 1024;
-      if (file.size > maxSize) {
-        throw new BadRequestException('Image size must be less than 4MB');
-      }
-      // Convert Buffer to Uint8Array for browser compatibility
+      // Node buffer -> Blob (use Uint8Array for compatibility)
       const uint8Array = new Uint8Array(file.buffer);
-      const uploadFile = new File([uint8Array], file.originalname, {
-        type: file.mimetype,
-      });
+      const blob = new Blob([uint8Array], { type: file.mimetype });
+      const response = await this.utapi.uploadFiles(
+        new File([blob], file.originalname, { type: file.mimetype }),
+      );
 
-      const response = await this.utapi.uploadFiles(uploadFile);
+      if (!response.data) throw new BadRequestException('Upload failed');
 
-      if (!response.data) {
-        throw new Error('Upload failed: No data returned');
-      }
-
-      return {
-        url: response.data.ufsUrl,
-        key: response.data.key,
-      };
-    } catch (error) {
-      console.error('Image upload error:', error);
-      throw new BadRequestException(error.message || 'Failed to upload image');
+      return { url: response.data.ufsUrl, key: response.data.key };
+    } catch (err: any) {
+      console.error('Image upload error:', err);
+      throw new BadRequestException(err.message || 'Upload failed');
     }
   }
 
-  async uploadVideo(
-    file: Express.Multer.File,
-  ): Promise<{ url: string; key: string }> {
+  /** Upload a video (<=512MB) */
+  async uploadVideo(file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('No file provided');
+    if (!file.mimetype.startsWith('video/'))
+      throw new BadRequestException('Only videos allowed');
+    if (file.size > 512 * 1024 * 1024)
+      throw new BadRequestException('Video must be < 512MB');
+
     try {
-      // Validate file type
-      if (!file.mimetype.startsWith('video/')) {
-        throw new BadRequestException('Only video files are allowed');
-      }
-
-      // Validate file size (512MB)
-      const maxSize = 512 * 1024 * 1024;
-      if (file.size > maxSize) {
-        throw new BadRequestException('Video size must be less than 512MB');
-      }
-      // Convert Buffer to Uint8Array for browser compatibility
+      // Node buffer -> Blob (use Uint8Array for compatibility)
       const uint8Array = new Uint8Array(file.buffer);
-      const uploadFile = new File([uint8Array], file.originalname, {
-        type: file.mimetype,
-      });
+      const blob = new Blob([uint8Array], { type: file.mimetype });
+      const response = await this.utapi.uploadFiles(
+        new File([blob], file.originalname, { type: file.mimetype }),
+      );
 
-      const response = await this.utapi.uploadFiles(uploadFile);
+      if (!response.data) throw new BadRequestException('Upload failed');
 
-      if (!response.data) {
-        throw new Error('Upload failed: No data returned');
-      }
-
-      return {
-        url: response.data.ufsUrl,
-        key: response.data.key,
-      };
-    } catch (error) {
-      console.error('Video upload error:', error);
-      throw new BadRequestException(error.message || 'Failed to upload video');
+      return { url: response.data.ufsUrl, key: response.data.key };
+    } catch (err: any) {
+      console.error('Video upload error:', err);
+      throw new BadRequestException(err.message || 'Upload failed');
     }
   }
 
-  async deleteFile(fileKey: string): Promise<void> {
+  /** Delete a file by key */
+  async deleteFile(fileKey: string) {
+    if (!fileKey) throw new BadRequestException('File key required');
     try {
       await this.utapi.deleteFiles(fileKey);
-    } catch (error) {
-      console.error('File deletion error:', error);
+    } catch (err) {
+      console.error('Delete error:', err);
       throw new BadRequestException('Failed to delete file');
     }
   }
