@@ -2,7 +2,7 @@ import {
   Controller,
   Post,
   UseInterceptors,
-  UploadedFile,
+  UploadedFile, 
   BadRequestException,
   Delete,
   Body,
