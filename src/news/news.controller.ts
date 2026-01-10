@@ -21,12 +21,12 @@ export class NewsController {
   }
 
   @Get()
-  findAll(@Query('lang') lang?: string) {
+  findAll(@Query('lang') lang?: 'uz' | 'ru' | 'en') {
     return this.newsService.findAll(lang);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Query('lang') lang?: string) {
+  findOne(@Param('id') id: string, @Query('lang') lang?: 'uz' | 'ru' | 'en') {
     return this.newsService.findOne(id, lang);
   }
 

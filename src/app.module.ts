@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { BlogModule } from './blog/blog.module';
 import { NewsModule } from './news/news.module';

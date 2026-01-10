@@ -1,18 +1,19 @@
-import 'dotenv/config';
-import { db } from './database';
+import { db, closeDb } from './database.service';
 import { blogs, news } from './schema';
-import { Logger } from '@nestjs/common';
-
-const logger = new Logger();
 
 async function main() {
-  const allBlogs = await db.select().from(blogs);
-  console.log(`Blogs: ${allBlogs}`);
-  logger.log(`Blogs: ${allBlogs}`);
+  const database = await db; // ✅ await the async db
 
-  const allNews = await db.select().from(news);
-  console.log(`News: ${allNews}`);
-  logger.log(`News: ${allNews}`);
+  const allBlogs = await database.select().from(blogs);
+  console.log('Blogs:', allBlogs);
+
+  const allNews = await database.select().from(news);
+  console.log('News:', allNews);
+
+  await closeDb(); // close connection after script
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

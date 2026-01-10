@@ -1,11 +1,16 @@
-import 'dotenv/config';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db } from './database';
+import { db, closeDb } from './database.service';
+import { blogs, news } from './schema';
 
 async function main() {
-  await migrate(db, { migrationsFolder: 'drizzle' });
-  console.log('Database migrated');
-  process.exit(0);
+  const database = await db; // ✅ await the async db
+
+  const allBlogs = await database.select().from(blogs);
+  console.log('Blogs:', allBlogs);
+
+  const allNews = await database.select().from(news);
+  console.log('News:', allNews);
+
+  await closeDb(); // close connection after script
 }
 
 main().catch((err) => {
