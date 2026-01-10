@@ -16,15 +16,14 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     // const databaseUrl = process.env.DATABASE_URL;
-    const databaseUrl =
-      'postgresql://kamalov:eRV2GuTzyhA7fO6920vHR5ijk0aBwMKh@dpg-d5glfme3jp1c73c5691g-a.virginia-postgres.render.com/soliq?sslmode=require';
+    const databaseUrl = process.env.DATABASE_URL!;
     console.log(`Using this db: ${databaseUrl}`);
     if (!databaseUrl) {
       throw new Error('DATABASE_URL is not defined');
     }
 
     this.client = postgres(databaseUrl, {
-      ssl: { rejectUnauthorized: false }, // required for Render Postgres
+      ssl: { rejectUnauthorized: false },
     });
 
     this.db = drizzle(this.client, { schema });

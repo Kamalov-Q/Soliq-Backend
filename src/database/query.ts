@@ -1,16 +1,22 @@
-import { db, closeDb } from './database.service';
+import 'dotenv/config';
+import { DatabaseService } from './database.service';
 import { blogs, news } from './schema';
 
-async function main() {
-  const database = await db; // ✅ await the async db
+const databaseService = new DatabaseService();
 
-  const allBlogs = await database.select().from(blogs);
+async function main() {
+  const db = await (async () => {
+    await databaseService.onModuleInit();
+    return databaseService.db;
+  })();
+
+  const allBlogs = await db.select().from(blogs);
   console.log('Blogs:', allBlogs);
 
-  const allNews = await database.select().from(news);
+  const allNews = await db.select().from(news);
   console.log('News:', allNews);
 
-  await closeDb(); // close connection after script
+  await databaseService.onModuleDestroy();
 }
 
 main().catch((err) => {
