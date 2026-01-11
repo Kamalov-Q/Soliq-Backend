@@ -13,10 +13,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
   app.enableCors({
     origin: '*',
-    credentials: true,
   });
 
   // Swagger Configuration
