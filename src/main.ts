@@ -1,13 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
 
-  // Validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -16,18 +14,41 @@ async function bootstrap() {
     }),
   );
 
-  // Serve static files from /public
-  app.useStaticAssets(join(__dirname, '..', 'public'), {
-    prefix: '/public/',
+  app.enableCors({
+    origin: '*',
+    credentials: true,
   });
 
-  // Enable CORS
-  app.enableCors();
+  // Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle('Blog & News API')
+    .setDescription(
+      'API documentation for Blog and News management system with file uploads',
+    )
+    .setVersion('1.0')
+    .addTag('Blogs', 'Blog management endpoints')
+    .addTag('News', 'News management endpoints')
+    .addTag('File Upload', 'UploadThing file upload endpoints')
+    .addServer('http://localhost:3002', 'Local Development')
+    .addServer('https://soliq-backend.onrender.com', 'Production Development')
+    .build();
 
-  // Bind to Render port (fallback to 3002 locally)
-  const port = parseInt(process.env.PORT, 10) || 3002;
-  await app.listen(port, () => {
-    console.log(`Application is running on port: ${port}`);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    customSiteTitle: 'Blog & News API Docs',
+    customfavIcon: 'https://nestjs.com/img/logo-small.svg',
+    customCss: '.swagger-ui .topbar { display: none }',
   });
+
+  await app.listen(3002);
+  console.log(process.env.DATABASE_URL, `Url being set `);
+  console.log('🚀 Application is running on: http://localhost:3002');
+  console.log('📚 Swagger documentation: http://localhost:3002/api/docs');
+  console.log(
+    '📤 Image upload: POST http://localhost:3002/api/uploadthing/image',
+  );
+  console.log(
+    '🎬 Video upload: POST http://localhost:3002/api/uploadthing/video',
+  );
 }
 bootstrap();
