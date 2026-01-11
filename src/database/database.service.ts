@@ -15,15 +15,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(DatabaseService.name);
 
   async onModuleInit() {
-    // const databaseUrl = process.env.DATABASE_URL;
     const databaseUrl = process.env.DATABASE_URL!;
-    // console.log(`Using this db: ${databaseUrl}`);
     if (!databaseUrl) {
       throw new Error('DATABASE_URL is not defined');
     }
 
+    // Supabase requires SSL
     this.client = postgres(databaseUrl, {
-      ssl: { rejectUnauthorized: false },
+      ssl: { rejectUnauthorized: false }, // Supabase self-signed certs
+      prepare: false, // Recommended for Supabase with drizzle
     });
 
     this.db = drizzle(this.client, { schema });

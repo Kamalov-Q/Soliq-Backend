@@ -10,6 +10,8 @@ async function main() {
   dotenv.config({ override: true });
   
   const databaseUrl = process.env.DATABASE_URL;
+
+  // const databaseUrl = "postgresql://kamalov:eRV2GuTzyhA7f06920vHR5ijk0aBwMKh@dpg-d5glfme3jp1c73c5691g-a.virginia-postgres.render.com/soliq"
   
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is not defined');
