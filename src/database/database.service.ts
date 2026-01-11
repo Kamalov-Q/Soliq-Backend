@@ -20,10 +20,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       throw new Error('DATABASE_URL is not defined');
     }
 
-    // Supabase requires SSL
     this.client = postgres(databaseUrl, {
-      ssl: { rejectUnauthorized: false }, // Supabase self-signed certs
-      prepare: false, // Recommended for Supabase with drizzle
+      ssl: { rejectUnauthorized: false },
+      prepare: false,
     });
 
     this.db = drizzle(this.client, { schema });

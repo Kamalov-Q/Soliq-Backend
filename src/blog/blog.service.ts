@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { blogs } from '../database/schema';
-import { eq, desc } from 'drizzle-orm';
-import { CreateBlogDto, UpdateBlogDto } from './dto/blog.dto';
+import { eq, desc, count } from 'drizzle-orm';
+import { CreateBlogDto, UpdateBlogDto, PaginationQueryDto } from './dto/blog.dto';
 
 @Injectable()
 export class BlogService {
-  constructor(private readonly dbService: DatabaseService) {}
+  constructor(private readonly dbService: DatabaseService) { }
 
   async create(data: CreateBlogDto) {
     const [blog] = await this.dbService.db
@@ -23,25 +23,50 @@ export class BlogService {
     return blog;
   }
 
-  async findAll(lang?: string) {
+  async findAll(lang?: string, paginationQuery?: PaginationQueryDto) {
+    const page = paginationQuery?.page || 1;
+    const limit = paginationQuery?.limit || 10;
+    const offset = (page - 1) * limit;
+
+    // Get total count
+    const [{ total }] = await this.dbService.db
+      .select({ total: count() })
+      .from(blogs);
+
+    // Get paginated data
     const allBlogs = await this.dbService.db
       .select()
       .from(blogs)
-      .orderBy(desc(blogs.issuedAt));
+      .orderBy(desc(blogs.issuedAt))
+      .limit(limit)
+      .offset(offset);
 
+    const totalPages = Math.ceil(total / limit);
+
+    let data = allBlogs;
     if (lang) {
       const langKey = `title${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
-      return allBlogs.map((blog) => ({
+      data = allBlogs.map(blog => ({
         id: blog.id,
         videoUrl: blog.videoUrl,
         title: blog[langKey],
         issuedAt: blog.issuedAt,
         createdAt: blog.createdAt,
         updatedAt: blog.updatedAt,
-      }));
+      })) as any;
     }
 
-    return allBlogs;
+    return {
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    };
   }
 
   async findOne(id: string, lang?: string) {

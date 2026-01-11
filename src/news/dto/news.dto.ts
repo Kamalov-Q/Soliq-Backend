@@ -2,10 +2,44 @@ import {
   IsString,
   IsNotEmpty,
   IsOptional,
-  IsUrl,
   IsDateString,
+  Min,
+  IsInt,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+export class NewsDto {
+  @ApiProperty({ example: '1' })
+  id: string;
+
+  @ApiProperty({ example: 'Yangi texnologiyalar' })
+  titleUz: string;
+
+  @ApiProperty({ example: 'Новые технологии' })
+  titleRu: string;
+
+  @ApiProperty({ example: 'New Technologies' })
+  titleEn: string;
+
+  @ApiProperty({ example: 'News description in Uzbek' })
+  descriptionUz: string;
+
+  @ApiProperty({ example: 'Описание новости на русском' })
+  descriptionRu: string;
+
+  @ApiProperty({ example: 'News description in English' })
+  descriptionEn: string;
+
+  @ApiProperty({ example: 'https://utfs.io/f/abc123.jpg' })
+  imageUrl: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  author: string;
+
+  @ApiProperty({ example: '2025-01-10T12:00:00Z' })
+  issuedAt: string;
+}
 
 export class CreateNewsDto {
   @ApiProperty({
@@ -52,7 +86,6 @@ export class CreateNewsDto {
     example: 'https://utfs.io/f/abc123.jpg',
   })
   @IsString()
-  @IsUrl()
   @IsNotEmpty()
   imageUrl: string;
 
@@ -103,7 +136,6 @@ export class UpdateNewsDto {
 
   @ApiPropertyOptional({ description: 'Image URL from UploadThing' })
   @IsString()
-  @IsUrl()
   @IsOptional()
   imageUrl?: string;
 
@@ -117,3 +149,42 @@ export class UpdateNewsDto {
   @IsOptional()
   issuedAt?: string;
 }
+
+export class PaginationQueryDto {
+  @ApiPropertyOptional({
+    description: 'Page number (starts from 1)',
+    example: 1,
+    default: 1,
+  })
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  page?: number = 1;
+
+  @ApiPropertyOptional({
+    description: 'Number of items per page',
+    example: 10,
+    default: 10,
+  })
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  limit?: number = 10;
+}
+
+export class PaginatedNewsResponseDto {
+  @ApiProperty({ description: 'Array of news articles', type: [NewsDto] })
+  data: NewsDto[];
+
+  @ApiProperty({ description: 'Pagination metadata', type: [PaginationQueryDto] })
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+} 

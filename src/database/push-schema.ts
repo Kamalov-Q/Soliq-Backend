@@ -11,8 +11,6 @@ async function main() {
   
   const databaseUrl = process.env.DATABASE_URL;
 
-  // const databaseUrl = "postgresql://kamalov:eRV2GuTzyhA7f06920vHR5ijk0aBwMKh@dpg-d5glfme3jp1c73c5691g-a.virginia-postgres.render.com/soliq"
-  
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is not defined');
   }
@@ -20,10 +18,8 @@ async function main() {
   console.log('Connecting to database...');
   console.log('Database URL:', databaseUrl.replace(/:[^:@]+@/, ':****@'));
   
-  // Check if it's a local connection (no SSL needed)
   const isLocal = databaseUrl.includes('localhost') || databaseUrl.includes('127.0.0.1');
   
-  // Use the same connection method as the app
   const client = postgres(databaseUrl, {
     ssl: isLocal ? false : { rejectUnauthorized: false },
     max: 1,
