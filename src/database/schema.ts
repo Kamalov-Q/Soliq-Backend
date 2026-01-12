@@ -6,7 +6,7 @@ export const blogs = pgTable('blogs', {
   titleUz: text('title_uz').notNull(),
   titleRu: text('title_ru').notNull(),
   titleEn: text('title_en').notNull(),
-  issuedAt: timestamp('issued_at').notNull(),
+  releasedAt: timestamp('released_at', { mode: 'string' }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -21,7 +21,7 @@ export const news = pgTable('news', {
   descriptionEn: text('description_en').notNull(),
   imageUrl: text('image_url').notNull(),
   author: text('author').notNull(),
-  issuedAt: timestamp('issued_at').notNull(),
+  releasedAt: timestamp('released_at', { mode: 'string' }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

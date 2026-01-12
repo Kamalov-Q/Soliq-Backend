@@ -38,7 +38,7 @@ export class NewsDto {
   author: string;
 
   @ApiProperty({ example: '2025-01-10T12:00:00Z' })
-  issuedAt: string;
+  releasedAt: string;
 }
 
 export class CreateNewsDto {
@@ -95,12 +95,12 @@ export class CreateNewsDto {
   author: string;
 
   @ApiProperty({
-    description: 'Date when the news was issued',
+    description: 'Date when the news was released',
     example: '2025-01-10T12:00:00Z',
   })
   @IsDateString()
   @IsNotEmpty()
-  issuedAt: string;
+  releasedAt: string;
 }
 
 export class UpdateNewsDto {
@@ -144,10 +144,10 @@ export class UpdateNewsDto {
   @IsOptional()
   author?: string;
 
-  @ApiPropertyOptional({ description: 'Date when the news was issued' })
+  @ApiPropertyOptional({ description: 'Date when the news was released' })
   @IsDateString()
   @IsOptional()
-  issuedAt?: string;
+  releasedAt?: string;
 }
 
 export class PaginationQueryDto {

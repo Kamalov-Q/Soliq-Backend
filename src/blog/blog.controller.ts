@@ -30,9 +30,7 @@ import {
 export class BlogController {
   constructor(private readonly blogService: BlogService) { }
 
-  /**
-   * Create a new blog
-   */
+
   @Post()
   @ApiOperation({ summary: 'Create a new blog' })
   @ApiResponse({
@@ -45,9 +43,7 @@ export class BlogController {
     return this.blogService.create(createBlogDto);
   }
 
-  /**
-   * Get all blogs with pagination
-   */
+
   @Get()
   @ApiOperation({ summary: 'Get all blogs with pagination' })
   @ApiQuery({
@@ -81,9 +77,7 @@ export class BlogController {
     return this.blogService.findAll(lang, paginationQuery);
   }
 
-  /**
-   * Get a blog by ID
-   */
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a blog by ID' })
   @ApiParam({ name: 'id', description: 'Blog ID', type: String })
@@ -103,9 +97,7 @@ export class BlogController {
     return this.blogService.findOne(id, lang);
   }
 
-  /**
-   * Update a blog
-   */
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update a blog' })
   @ApiParam({ name: 'id', description: 'Blog ID', type: String })
@@ -120,9 +112,7 @@ export class BlogController {
     return this.blogService.update(id, updateBlogDto);
   }
 
-  /**
-   * Delete a blog
-   */
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a blog' })
   @ApiParam({ name: 'id', description: 'Blog ID', type: String })

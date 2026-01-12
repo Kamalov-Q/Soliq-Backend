@@ -15,6 +15,13 @@
       "when": 1768157292501,
       "tag": "0001_condemned_sleeper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1768196298474,
+      "tag": "0002_ambiguous_redwing",
+      "breakpoints": true
     }
   ]
 }

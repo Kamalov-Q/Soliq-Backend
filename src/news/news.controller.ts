@@ -40,7 +40,7 @@ export class NewsController {
     } catch (err) {
       throw new BadRequestException(err.message);
     }
-  }
+  } 
 
   @Get()
   @ApiOperation({ summary: 'Get all news articles with pagination' })

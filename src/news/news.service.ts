@@ -3,48 +3,55 @@ import { DatabaseService } from '../database/database.service';
 import { news } from '../database/schema';
 import { eq, desc, count } from 'drizzle-orm';
 import { CreateNewsDto, UpdateNewsDto, PaginationQueryDto } from './dto/news.dto';
-import { NewsDto } from './dto/news.dto';
 
 @Injectable()
 export class NewsService {
   constructor(private readonly dbService: DatabaseService) { }
 
-  // Create news
-  async create(data: CreateNewsDto): Promise<NewsDto> {
+  async create(data: CreateNewsDto) {
     const [newsItem] = await this.dbService.db
       .insert(news)
       .values({
         ...data,
-        issuedAt: new Date(data.issuedAt),
+        releasedAt: data.releasedAt, // Store as-is, no conversion
       })
       .returning();
 
-    return this.mapNews(newsItem);
+    return newsItem;
   }
 
-  // Find all news with pagination
   async findAll(lang?: string, paginationQuery?: PaginationQueryDto) {
     const page = paginationQuery?.page || 1;
     const limit = paginationQuery?.limit || 10;
     const offset = (page - 1) * limit;
 
-    // Total count
     const [{ total }] = await this.dbService.db
       .select({ total: count() })
       .from(news);
 
-    // Fetch paginated data
     const allNews = await this.dbService.db
       .select()
       .from(news)
-      .orderBy(desc(news.issuedAt))
+      .orderBy(desc(news.releasedAt))
       .limit(limit)
       .offset(offset);
 
-    // Map data with optional language
-    const data = allNews.map(item => this.mapNews(item, lang));
-
     const totalPages = Math.ceil(total / limit);
+
+    let data = allNews;
+    if (lang) {
+      const langKey = lang.charAt(0).toUpperCase() + lang.slice(1);
+      data = allNews.map(item => ({
+        id: item.id,
+        title: item[`title${langKey}`],
+        description: item[`description${langKey}`],
+        imageUrl: item.imageUrl,
+        author: item.author,
+        releasedAt: item.releasedAt,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      })) as any;
+    }
 
     return {
       data,
@@ -59,8 +66,7 @@ export class NewsService {
     };
   }
 
-  // Find one news by ID
-  async findOne(id: string, lang?: string): Promise<NewsDto> {
+  async findOne(id: string, lang?: string) {
     const [newsItem] = await this.dbService.db
       .select()
       .from(news)
@@ -70,17 +76,27 @@ export class NewsService {
       throw new NotFoundException(`News with ID ${id} not found`);
     }
 
-    return this.mapNews(newsItem, lang);
+    if (lang) {
+      const langKey = lang.charAt(0).toUpperCase() + lang.slice(1);
+      return {
+        id: newsItem.id,
+        title: newsItem[`title${langKey}`],
+        description: newsItem[`description${langKey}`],
+        imageUrl: newsItem.imageUrl,
+        author: newsItem.author,
+        releasedAt: newsItem.releasedAt,
+        createdAt: newsItem.createdAt,
+        updatedAt: newsItem.updatedAt,
+      };
+    }
+
+    return newsItem;
   }
 
-  // Update news
-  async update(id: string, data: UpdateNewsDto): Promise<NewsDto> {
-    await this.findOne(id); // throws 404 if not found
+  async update(id: string, data: UpdateNewsDto) {
+    await this.findOne(id);
 
     const updateData: any = { ...data, updatedAt: new Date() };
-    if (data.issuedAt) {
-      updateData.issuedAt = new Date(data.issuedAt);
-    }
 
     const [updated] = await this.dbService.db
       .update(news)
@@ -88,50 +104,17 @@ export class NewsService {
       .where(eq(news.id, id))
       .returning();
 
-    return this.mapNews(updated);
+    return updated;
   }
 
-  // Remove news
-  async remove(id: string): Promise<{ message: string }> {
-    await this.findOne(id); // throws 404 if not found
+  async remove(id: string) {
+    await this.findOne(id);
 
-    await this.dbService.db
+    const [deleted] = await this.dbService.db
       .delete(news)
       .where(eq(news.id, id))
       .returning();
 
-    return { message: 'News deleted successfully' };
-  }
-
-  // Helper to map news item to NewsDto, with optional language filtering
-  private mapNews(item: any, lang?: string): NewsDto {
-    if (lang) {
-      const langKey = lang.charAt(0).toUpperCase() + lang.slice(1);
-      return {
-        id: item.id,
-        titleUz: langKey === 'Uz' ? item[`title${langKey}`] : item.titleUz,
-        titleRu: langKey === 'Ru' ? item[`title${langKey}`] : item.titleRu,
-        titleEn: langKey === 'En' ? item[`title${langKey}`] : item.titleEn,
-        descriptionUz: langKey === 'Uz' ? item[`description${langKey}`] : item.descriptionUz,
-        descriptionRu: langKey === 'Ru' ? item[`description${langKey}`] : item.descriptionRu,
-        descriptionEn: langKey === 'En' ? item[`description${langKey}`] : item.descriptionEn,
-        imageUrl: item.imageUrl,
-        author: item.author,
-        issuedAt: item.issuedAt,
-      };
-    }
-
-    return {
-      id: item.id,
-      titleUz: item.titleUz,
-      titleRu: item.titleRu,
-      titleEn: item.titleEn,
-      descriptionUz: item.descriptionUz,
-      descriptionRu: item.descriptionRu,
-      descriptionEn: item.descriptionEn,
-      imageUrl: item.imageUrl,
-      author: item.author,
-      issuedAt: item.issuedAt,
-    };
+    return deleted;
   }
 }

@@ -16,7 +16,7 @@ export class BlogService {
         titleUz: data.titleUz,
         titleRu: data.titleRu,
         titleEn: data.titleEn,
-        issuedAt: new Date(data.issuedAt),
+        releasedAt: data.releasedAt,
       })
       .returning();
 
@@ -28,16 +28,14 @@ export class BlogService {
     const limit = paginationQuery?.limit || 10;
     const offset = (page - 1) * limit;
 
-    // Get total count
     const [{ total }] = await this.dbService.db
       .select({ total: count() })
       .from(blogs);
 
-    // Get paginated data
     const allBlogs = await this.dbService.db
       .select()
       .from(blogs)
-      .orderBy(desc(blogs.issuedAt))
+      .orderBy(desc(blogs.releasedAt))
       .limit(limit)
       .offset(offset);
 
@@ -50,7 +48,7 @@ export class BlogService {
         id: blog.id,
         videoUrl: blog.videoUrl,
         title: blog[langKey],
-        issuedAt: blog.issuedAt,
+        releasedAt: blog.releasedAt,
         createdAt: blog.createdAt,
         updatedAt: blog.updatedAt,
       })) as any;
@@ -85,7 +83,7 @@ export class BlogService {
         id: blog.id,
         videoUrl: blog.videoUrl,
         title: blog[langKey],
-        issuedAt: blog.issuedAt,
+        releasedAt: blog.releasedAt,
         createdAt: blog.createdAt,
         updatedAt: blog.updatedAt,
       };
@@ -98,9 +96,6 @@ export class BlogService {
     await this.findOne(id);
 
     const updateData: any = { ...data, updatedAt: new Date() };
-    if (data.issuedAt) {
-      updateData.issuedAt = new Date(data.issuedAt);
-    }
 
     const [updated] = await this.dbService.db
       .update(blogs)

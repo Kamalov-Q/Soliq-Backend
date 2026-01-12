@@ -18,8 +18,8 @@ export class BlogsDto {
   @ApiProperty({ example: 'About News', description: 'Blog title in English' })
   titleEn: string;
 
-  @ApiProperty({ example: '2025-01-10T12:00:00Z', description: 'Date when the blog was issued' })
-  issuedAt: string;
+  @ApiProperty({ example: '2025-01-10T12:00:00', description: 'Date when the blog was released' })
+  releasedAt: string;
 }
 
 // CreateBlogDto remains mostly the same
@@ -44,10 +44,10 @@ export class CreateBlogDto {
   @IsNotEmpty()
   titleEn: string;
 
-  @ApiProperty({ description: 'Date when the blog was issued', example: '2025-01-10T12:00:00Z' })
+  @ApiProperty({ description: 'Date when the blog was released', example: '2025-01-10T12:00:00Z' })
   @IsDateString()
   @IsNotEmpty()
-  issuedAt: string;
+  releasedAt: string;
 }
 
 // UpdateBlogDto
@@ -72,10 +72,10 @@ export class UpdateBlogDto {
   @IsOptional()
   titleEn?: string;
 
-  @ApiPropertyOptional({ description: 'Date when the blog was issued', example: '2025-01-10T12:00:00Z' })
+  @ApiPropertyOptional({ description: 'Date when the blog was released', example: '2025-01-10T12:00:00Z' })
   @IsDateString()
   @IsOptional()
-  issuedAt?: string;
+  releasedAt?: string;
 }
 
 // PaginationQueryDto (same as before)
